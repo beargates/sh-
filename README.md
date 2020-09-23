@@ -1,5 +1,5 @@
 ## image2TiledMap images  creator.sh
-将一个图片文件（png, jpg）处理成地图式的碎片文件
+将一个图片文件（png, jpg）处理成地图式的碎片文件(几x几的多个图片文件)，默认单元格大小1024*1024
 ### install
 brew install imagemagick<br />
 brew install ffmpeg
