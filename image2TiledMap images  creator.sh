@@ -1,5 +1,9 @@
-cellW=1024
-cellH=1024
+#
+# brew install ffmpeg
+# brew install imagemagick 可选
+#
+cellW=512
+cellH=512
 
 # 处理单个图片
 function process() {
@@ -9,8 +13,24 @@ function process() {
     local filename=${fullname%.*}         #文件名               bg
     local exname=${fullname##*.}          #扩展名               png
     #获取宽高
-    local w=`convert $file -print "%w"`
-    local h=`convert $file -print "%h"`
+    local w
+    local h
+    #使用imagemagick获取宽高
+    # local w=`convert $file -print "%w"`
+    # local h=`convert $file -print "%h"`
+    for i in `ffprobe -i $file -show_frames`
+    do
+        #匹配以“width=”开头
+        if [[ $i =~ ^width=.* ]];then
+            #取子串
+            w=`expr $i : "width=\([0-9]*\)"`
+        fi
+
+        if [[ $i =~ ^height=.* ]];then
+            h=`expr $i : "height=\([0-9]*\)"`
+        fi
+    done
+
     if [ $w -lt $cellW ];then
         cellW=$w;
     fi
@@ -28,9 +48,9 @@ function process() {
         cellY=$((cellY + 1))
     fi
 
-    if [ ! -d crop ];then
-        mkdir crop
-    fi
+    # if [ ! -d crop ];then
+        mkdir "$path/crop"
+    # fi
 
     #for循环
     for i in $(seq $(($cellX * $cellY)))
